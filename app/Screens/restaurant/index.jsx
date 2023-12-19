@@ -6,26 +6,40 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ArrowLeft, MapPin, Star} from 'react-native-feather';
 import {themeColors} from '../../Themes/ThemeColors';
 import DishRow from './Components/DishRow';
+import CartIcon from './Components/CartIcon';
+import {useDispatch} from 'react-redux';
+import { setResturant } from '../../Redux/Slices/RestaurantSlice';
 
 const Restaurant = () => {
+  const dispatch = useDispatch();
   const {params} = useRoute();
   let item = params;
   const navigation = useNavigation();
+  useEffect(() => {
+
+    if(item && item.id){
+      dispatch(setResturant({...item}))
+    }
+  }, []);
+
   return (
-    <SafeAreaView>
+    <View>
+      <CartIcon />
+      <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="relative">
           <Image className="w-full h-72" source={{uri: item.image}} />
           <TouchableOpacity
             onPress={navigation.goBack}
-            className="absolute top-4 left-4 bg-gray-50 p-2 rounded-full shadow">
+            className="absolute top-14 left-4 bg-gray-50 p-2 rounded-full shadow">
             <ArrowLeft strokeWidth={3} stroke={themeColors.bgColor(1)} />
           </TouchableOpacity>
         </View>
@@ -65,7 +79,7 @@ const Restaurant = () => {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
