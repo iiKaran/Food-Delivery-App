@@ -21,10 +21,13 @@ import FeaturedRow from './Components/FeaturedRow';
 import DishCard from './Components/DishCard';
 import ViewCartBtn from './Components/ViewCartBtn';
 import { ShoppingCart } from 'react-native-feather';
+import { Phone } from 'react-native-feather';
+import { useSelector} from 'react-redux';
+import { addToCart } from '../../Redux/Slices/cartSlice';
 const HomeScreen = ({navigation}) => {
   const [activeCategory, setActiveCategory] = useState(1);
   const [currDishes,setDishes]= useState(null);
-
+  const cartItems = useSelector(state => state.cart.items);
   useEffect(()=>{
      
     setDishes(MenuItems[0])
@@ -41,15 +44,25 @@ const HomeScreen = ({navigation}) => {
     <SafeAreaView className="bg-white flex-1">
       <StatusBar barStyle="dark-content"></StatusBar>
       {/* Search Bar */}
-      <View className="flex-row items-center justify-between  space-x-1 px-4 h-[20vh] pb-2">
+      <View className="flex-row items-center justify-between   px-3 h-[20vh] pb-2">
       <Image className="w-[100px] h-[120px] rounded-full" source={{uri: 'https://thumbs.dreamstime.com/b/plate-fork-spoon-restaurant-logo-white-background-eps-plate-fork-spoon-restaurant-logo-193685698.jpg'}} />
-      
+      <View className="flex flex-row gap-2 ">
       <TouchableOpacity className="px-3 rounded-md py-2  cursor-pointer  " onPress={()=>{
+        navigation.navigate('Cart');
       }}>
         <View>
-          <ShoppingCart stroke={"black"} fontSize={"large"}></ShoppingCart>
+          <ShoppingCart stroke={"black"} fontSize={"120px"}></ShoppingCart>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity
+            className="rounded-md py-2 px-3  cursor-pointer  "
+           >
+             <View>
+          <Phone stroke={"black"} fontSize={"120px"}></Phone>
+        </View>
+          </TouchableOpacity>
+      </View>
+
       </View>
       {/* main area */}
       
@@ -66,7 +79,7 @@ const HomeScreen = ({navigation}) => {
       />
         </View>
 
-     <ViewCartBtn active={true}></ViewCartBtn>
+     <ViewCartBtn active={cartItems.length>0?true:false}></ViewCartBtn>
     </SafeAreaView>
 
   );

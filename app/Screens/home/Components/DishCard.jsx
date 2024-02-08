@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import {themeColors} from '../../../Themes/ThemeColors';
 import {useNavigation} from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart } from '../../../Redux/Slices/cartSlice';
 import {Star} from 'react-native-feather';
 const DishCard = ({item}) => {
   const renderStars = rate => {
@@ -21,6 +23,7 @@ const DishCard = ({item}) => {
     return stars;
   };
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   return (
     <View
       // style={{shadowColor: themeColors.bgColor(0.2), shadowRadius: 7}}
@@ -59,7 +62,8 @@ const DishCard = ({item}) => {
           <TouchableOpacity
             className="px-3 rounded-md py-2  cursor-pointer  bg-[#e78e3d]"
             onPress={() => {
-              Alert.alert('Added To Cart ');
+              
+              dispatch(addToCart(item))
             }}>
             <Text className="text-[19px]  text-white "> Add to Cart</Text>
           </TouchableOpacity>

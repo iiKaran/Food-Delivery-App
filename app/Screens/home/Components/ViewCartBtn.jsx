@@ -1,11 +1,16 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-
-const ViewCartBtn = ({ active }) => {
+const ViewCartBtn = ({ active}) => {
+  const navigation = useNavigation();
   return (
     active && (
       <View activeOpacity={1} style={styles.container}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={
+           ()=>{
+            navigation.navigate('Cart');
+           }
+        }>
           <Text style={styles.text}>
             View Cart
 
