@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -19,62 +19,86 @@ import {Minus, Phone, Plus} from 'react-native-feather';
 import CheckoutModal from './CheckoutModal';
 
 const CartScreen = () => {
-  const [modal,setmodal]= useState(true );
+  const [modal, setmodal] = useState(false);
+  const [order,setOrder]= useState(null);
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
   const totalPrice = useSelector(state => state.cart.totalPrice);
+  function populateOrderCheckOutModal(){
+    
+    const formedOrder = [];
+    cartItems.map((item)=>{
+      
+      const tempItem ={}
+      tempItem.name = item.name ;
+      tempItem.quantity= item.quantity ; 
+      tempItem.price= item.quantity * item.price ; 
+      formedOrder.push(tempItem); 
 
-  const renderItem = ({item}) => (
-    <View
-      style={styles.item}
-      className=" mt-2 w-[98vw] mx-auto py-4 px-2 pr-4 ">
-      <View className="flex flex-row gap-3 items-center">
-        <Image
-          className="h-20 w-[120px]  rounded-full  pt-2 "
-          source={{uri: item?.image}}
-        />
-        <Text>{item.name} </Text>
-      </View>
-      <View className=" flex items-center gap-2">
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() =>
-              dispatch(removeFromCart({id: item.id, price: item.price}))
-            }>
-            <View
-              style={styles.quantityBtn}
-              className="text-[19px] font-[800]  bg-[#e78e3d] rounded-full">
-              <Minus stroke={'white'}></Minus>
-            </View>
-          </TouchableOpacity>
-          <Text style={styles.quantity}>{item.quantity}</Text>
-          <TouchableOpacity
-            onPress={() =>
-              dispatch(
-                addToCart({id: item.id, name: item.name, price: item.price}),
-              )
-            }>
-            <View
-              style={styles.quantityBtn}
-              className="text-[19px] font-[800]  bg-[#e78e3d] rounded-full">
-              <Plus stroke={'white'}></Plus>
-            </View>
-          </TouchableOpacity>
+    })
+    setOrder(formedOrder);
+
+    setmodal(true);
+  }
+  const renderItem = ({item}) =>
+    item && (
+      
+      <View
+        style={styles.item}
+        className=" mt-2 w-[98vw] mx-auto py-4 px-2 pr-4 "
+        key={item.id} >
+        <View className="flex flex-row gap-3 items-center">
+          {
+            console.log(item)
+          }
+          {item.image && (
+            <Image
+              className="h-20 w-[120px]  rounded-full  pt-2 "
+              source={{uri: item.image}}
+            />
+          )}
+          <Text className="text-black w-[100px]">{item.name} </Text>
         </View>
-        <Text className="font-bold text-[19px] ">
-          {'\u20B9' + ' ' + item.price}
-        </Text>
+        <View className=" flex items-center gap-2">
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() =>
+                dispatch(removeFromCart({id: item.id, price: item.price}))
+              }>
+              <View
+                style={styles.quantityBtn}
+                className="text-[19px] font-[800]  bg-[#e78e3d] rounded-full">
+                <Minus stroke={'white'}></Minus>
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.quantity} className="text-black">{item.quantity}</Text>
+            <TouchableOpacity
+              onPress={() =>
+                dispatch(
+                  addToCart({id: item.id, name: item.name, price: item.price}),
+                )
+              }>
+              <View
+                style={styles.quantityBtn}
+                className="text-[19px] font-[800]  bg-[#e78e3d] rounded-full">
+                <Plus stroke={'white'}></Plus>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <Text className="font-bold text-[19px] text-black">
+            {'\u20B9' + ' ' + item.price} for one
+          </Text>
+        </View>
       </View>
-    </View>
-  );
+    );
 
   const handleEmptyCart = () => {
     dispatch(emptyCart());
   };
 
-  return (
-    !modal ? <View style={styles.container}>
-      <View className="flex-row items-center justify-between    px-3 h-[20vh] pb-2">
+  return !modal ? (
+    <View style={styles.container}>
+      <View className="flex-row items-center justify-between     px-3 h-[20vh] pb-2">
         <Image
           className="w-[100px] h-[120px] rounded-full"
           source={{
@@ -89,34 +113,42 @@ const CartScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {cartItems.length !== 0 && (
-        <Text style={styles.header}>Ready to Checkout</Text>
-      )}
 
       {cartItems.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Your Cart is empty</Text>
-          <Text style={styles.emptyText}>Let get together to Eat More</Text>
+          <Text style={styles.emptyText} className="text-black font-bold">Your Cart is empty</Text>
+          <Text style={styles.emptyText} className="text-black font-bold">Let get together to Eat More</Text>
         </View>
       ) : (
         <>
+          { cartItems.length!==0 && (
+            <Text style={styles.header} >Ready to Checkout</Text>
+          )}
           <FlatList
             data={cartItems}
             renderItem={renderItem}
             keyExtractor={item => item?.id?.toString()}
           />
           <View className="flex flex-row items-center px-3 py-6  justify-between">
-            <Text style={styles.totalPrice}>Total Price: {totalPrice}</Text>
-            <TouchableOpacity   className="px-3 rounded-md py-2  cursor-pointer  bg-[#e78e3d]" onPress={() => setmodal(true)} >
-                <Text className="text-[19px]  text-white">Checkout</Text>
+            <Text style={styles.totalPrice} className="text-black">Total Price:  {`${'\u20B9'} ${totalPrice}`}</Text>
+            <TouchableOpacity
+              className="px-3 rounded-md py-2  cursor-pointer  bg-[#e78e3d]"
+              onPress={populateOrderCheckOutModal}
+              >
+              <Text className="text-[19px]  text-white">Checkout</Text>
             </TouchableOpacity>
           </View>
           {/* <Button title="Empty Cart" onPress={handleEmptyCart} /> */}
         </>
       )}
-    </View>:<CheckoutModal onClose={()=>{
-        setmodal(false)
-    }}></CheckoutModal>
+    </View>
+  ) : (
+    <CheckoutModal
+      onClose={() => {
+        setmodal(false);
+      }} order={order} compOrder={()=>{
+        setOrder(null);
+      }}></CheckoutModal>
   );
 };
 
@@ -132,6 +164,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 10,
+    color:"black"
   },
   emptyContainer: {
     flex: 1,
@@ -141,6 +174,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     textAlign: 'center',
+  
   },
   item: {
     flexDirection: 'row',

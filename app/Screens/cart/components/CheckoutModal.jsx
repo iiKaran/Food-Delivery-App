@@ -1,37 +1,87 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, TextInput, StyleSheet, TouchableOpacity, Alert, Linking } from 'react-native';
-// Import SendIntentAndroid if needed, it's not used in the provided code
-
-const CheckoutModal = ({ visible, onClose }) => {
+import {useSelector, useDispatch} from 'react-redux';
+import { emptyCart } from '../../../Redux/Slices/cartSlice';
+const CheckoutModal = ({ visible, onClose, order,compOrder}) => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [society, setSociety] = useState('');
+  const dispatch = useDispatch();
   const [flatNumber, setFlatNumber] = useState('');
-
-  const sendWhatsAppMessage = (link) => {
-    console.log(link);
-    if (link) {
-      Linking.canOpenURL(link)
-        .then(supported => {
-          if (!supported) {
-            Alert.alert(
-              "Please install WhatsApp to send a direct message to students via WhatsApp"
-            );
-          } else {
-            return Linking.openURL(link);
-          }
+  const totalPrice = useSelector(state => state.cart.totalPrice);
+const openWhatsApp = (message) => {
+  let msg = message;
+  let mobile = "9888563650";
+  if (mobile) {
+    if (msg) {
+      let url =
+        "whatsapp://send?text=" +
+        msg +
+        "&phone=91" +
+        mobile;
+      Linking.openURL(url)
+        .then(data => {
+          console.log("WhatsApp Opened successfully " + msg);
         })
-        .catch(err => console.error('An error occurred', err));
+        .catch((err) => {
+          console.log(err)
+          Alert.alert("Make sure WhatsApp installed on your device");
+        });
     } else {
-      console.log('sendWhatsAppMessage -----> ', 'message link is undefined');
+      Alert.alert("Please enter message to send");
     }
+  } else {
+    Alert.alert("Please enter mobile no");
+  }
+};
+  const sendWhatsAppMessage = (message) => {
+    const link = `https://wa.me/9888563650?text=${encodeURIComponent(message)}`;
+    console.log(link);
+    Linking.canOpenURL(link)
+      .then(supported => {
+        if (!supported) {
+          Alert.alert(
+            "Please install WhatsApp to send a direct message to students via WhatsApp"
+          );
+        } else {
+          return Linking.openURL(link);
+        }
+      })
+      .catch(err => console.error('An error occurred', err));
   };
 
   const handleCheckout = () => {
-    const message = `I would like to order: .\n`;
-    const link = "https://wa.me/919888563650?text=%7B0%7D+Balaji+CTest";
-    sendWhatsAppMessage(link);
-    // onClose();
+
+    if(!name || !phoneNumber|| !society || !flatNumber)
+    {
+      Alert.alert("Enter the details Properly !")
+      return ;
+    }
+    const address = { society, flatNumber }; // Create an object with address details
+
+    let  formedString =""; 
+
+    order.map((orderItem)=>{
+       formedString += orderItem.quantity ; 
+       formedString+= "-  "
+       formedString += orderItem.name ; 
+       formedString+= " "
+       formedString += "Rs "
+       formedString+= orderItem.price ;
+       formedString += "\n";
+    })
+   
+   
+    
+    const message = `I would like to order:\n${formedString}\nTotal Payable :Rs ${totalPrice}\n
+    Contact Details :\nName: ${name}\nPhone Number: ${phoneNumber}\nAddress: ${JSON.stringify(address)}`;
+
+   
+    openWhatsApp(message);
+    compOrder();
+    onClose();
+    dispatch(emptyCart());
+
   };
 
   return (
@@ -49,6 +99,7 @@ const CheckoutModal = ({ visible, onClose }) => {
             placeholder="Name"
             value={name}
             onChangeText={text => setName(text)}
+            placeholderTextColor={"black"}
           />
           <TextInput
             style={styles.input}
@@ -56,18 +107,21 @@ const CheckoutModal = ({ visible, onClose }) => {
             value={phoneNumber}
             onChangeText={text => setPhoneNumber(text)}
             keyboardType="phone-pad"
+            placeholderTextColor={"black"}
           />
           <TextInput
             style={styles.input}
             placeholder="Society"
             value={society}
             onChangeText={text => setSociety(text)}
+            placeholderTextColor={"black"}
           />
           <TextInput
             style={styles.input}
             placeholder="Flat Number"
             value={flatNumber}
             onChangeText={text => setFlatNumber(text)}
+            placeholderTextColor={"black"}
           />
           <TouchableOpacity style={styles.button} onPress={handleCheckout}>
             <Text style={styles.buttonText}>Checkout</Text>
@@ -99,6 +153,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+    color:"black",
   },
   input: {
     borderWidth: 1,
@@ -106,22 +161,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    // placeholderTextColor:"black"
   },
   button: {
     backgroundColor: '#e78e3d',
     paddingVertical: 10,
     borderRadius: 5,
     marginBottom: 10,
+    color:"black",
   },
   buttonText: {
     fontSize: 19,
-    color: '#fff',
+    // color: '#fff',
     textAlign: 'center',
+    color:"black",
   },
   secondaryButton: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#000',
+    color:"black",
   },
 });
 

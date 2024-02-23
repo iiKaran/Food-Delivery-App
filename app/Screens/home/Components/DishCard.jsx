@@ -29,16 +29,16 @@ const DishCard = ({item}) => {
       // style={{shadowColor: themeColors.bgColor(0.2), shadowRadius: 7}}
       className="w-[90vw]   border mb-8  py-3 pt-0   mx-auto rounded-3xl bord mt-2 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
       <Image
-        className="h-60  rounded-3xl w-full pt-2 "
+        className="h-60  rounded-3xl w-[100%] mx-auto pt-2 "
         style={{shadowColor: themeColors.bgColor(0.2), shadowRadius: 7}}
         source={{uri: item.image}}
       />
-      <View className="px-3 pb-4 ">
+      <View className="px-3 pb-4 text-black">
         <Text className="text-[24px] font-[600]  mt-1  py-1">{item.name}</Text>
         <Text className="text-md font-bold text-[#e78e3d] mt-1 mb-1  ">
           Integredients :
         </Text>
-        <Text className="text-sm mt-0 font-bold  opacity-[.96]">
+        <Text className="text-sm mt-0 font-bold  text-black opacity-[.96]">
           {item.desc}
           <Text className="text-md font-bold text-[#e78e3d] ">
             {' '}
@@ -55,7 +55,7 @@ const DishCard = ({item}) => {
             renderStars(4)
             }</View>
             <View>
-              <Text>Ratings</Text>
+              <Text className="text-black ml-2 ">Ratings</Text>
             </View>
           </View>
           </View>

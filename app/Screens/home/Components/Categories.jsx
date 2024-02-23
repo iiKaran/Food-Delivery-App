@@ -13,22 +13,23 @@ const Categories = ({activeCategory , setActiveCategory}) => {
           let isActive = category.id === activeCategory;
           let btnClass = isActive ? 'bg-gray-600' : 'bg-gray-200';
           let textClass = isActive
-            ? 'font-semibold text-gray-800 mt-2 capitalize'
-            : 'text-gray-500 mt-2 capitalize';
+            ? 'font-semibold text-gray-800  capitalize'
+            : 'text-gray-500  capitalize';
           return (
             <View
               key={index}
               className={'flex justify-center items-center mr-6 mt-5'}>
               <TouchableOpacity
                 onPress={() => setActiveCategory(category.id)}
-                className={'p-5 rounded-full shadow-lg ' + btnClass}>
+                className={'p-0 pb-2 rounded-full shadow-lg ' + btnClass}>
                 <Image
                   className="rounded-full"
-                  style={{height: 45, width: 45, marginBottom:2}}
+                  style={{height: 80, width:80, marginBottom:2}}
                   source={{uri: category.image}}
                 />
               </TouchableOpacity>
-              <Text className={'text-sm' + textClass}>{category.name}</Text>
+              <Text className={'text-black text-sm' + textClass}>{category.name}</Text>
+
             </View>
           );
         })}
